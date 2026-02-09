@@ -7,7 +7,7 @@
 
 static uint32_t XOM_GetVersion(void) { return 0x26260203; }
 // ================= ??? =================
-#define APROM_START_OFFSET  12*1024      
+#define APROM_START_OFFSET  0x4000      
 #define TOTAL_SIZE          (64 * 1024)     // 64 KB
 #define SIGNATURE_SIZE      16
 #define VERIFY_LEN          (TOTAL_SIZE - SIGNATURE_SIZE)

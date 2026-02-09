@@ -98,6 +98,8 @@ int32_t main(void)
 
         if (SysTick->CTRL & SysTick_CTRL_COUNTFLAG_Msk)
         {
+			
+					
             XOM_Context_T ctx;
             ctx.pInputBuf = g_XomInputBuf;
             ctx.pOutputTrash = g_XomOutputTrash;
@@ -113,6 +115,7 @@ int32_t main(void)
             {
                 goto _ISP;
             }
+		
         }
     }
 
@@ -129,8 +132,14 @@ _ISP:
     }
 
 _APROM:
+		FMC->ISPCTL = FMC_ISPCTL_ISPEN_Msk;
+		__disable_irq();
+NVIC->ICPR[0] = 0xFFFFFFFF;
+
     FMC_SetVectorAddr(FMC_APROM_BASE);
-    NVIC_SystemReset();
+	//	 SCB->AIRCR = (V6M_AIRCR_VECTKEY_DATA | V6M_AIRCR_SYSRESETREQ);
+    //SYS_ResetCPU();
+		    SYS->IPRST0 |= SYS_IPRST0_CPURST_Msk;
 
     /* Trap the CPU */
     while (1);

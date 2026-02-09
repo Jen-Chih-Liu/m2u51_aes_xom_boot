@@ -84,6 +84,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
     }
     else if (lcmd == CMD_RUN_APROM)
     {
+			
         SYS->RSTSTS = 3; /*clear bit*/
 #if 0
 
@@ -105,9 +106,13 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
         FMC->ISPCTL = i;
         SCB->AIRCR = (V6M_AIRCR_VECTKEY_DATA | V6M_AIRCR_SYSRESETREQ);
 #endif
+__disable_irq();
+NVIC->ICPR[0] = 0xFFFFFFFF;
+
         FMC_SetVectorAddr(FMC_APROM_BASE);
         //FMC_SET_APROM_BOOT();
-        NVIC_SystemReset();
+        //SYS_ResetCPU();
+				    SYS->IPRST0 |= SYS_IPRST0_CPURST_Msk;
 
         /* Trap the CPU */
         while (1);
@@ -151,7 +156,7 @@ int ParseCmd(unsigned char *buffer, uint8_t len)
         }
         else
         {
-            StartAddress = 0;
+            StartAddress = FMC_APROM_BASE;
         }
 
         TotalLen = inpw(pSrc + 4);
